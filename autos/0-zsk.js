@@ -9,7 +9,7 @@
 // @run-at document-idle
 // @grant        none
 // ==/UserScript==
-//辅助函数
+//辅助函数, 从文件名中提取超连接
 //在pdf和txt文件名中存储链接,形如title&http~!!www.baidu.com&.pdf格式,~是因为windows文件名不能有:,!是因为linux文件名不能有/
 //返回http://www.baidu.com
 get_link_form_name= (s) => {

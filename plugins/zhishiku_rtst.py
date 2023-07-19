@@ -33,6 +33,30 @@ def process_strings(A, C, B):
     
 def get_title_by_doc(doc):
     return re.sub('【.+】', '', doc.metadata['source'])
+def get_title_from_title(s):
+    try:
+        if '&' not in s:
+            matches = re.search(r'\[(.+)\]', s)
+            return matches.group(1) if matches else s
+        else:
+            str_list = re.search(r'\[(.+)\]', s).group(1).split('&')
+            title = str_list[0]             #+ str_list[-1], 后缀
+            return title
+    except:
+        return s
+
+def get_link_from_title(s):
+    try:
+        if '&' in s:
+            # 因为 Linux 文件名不能有 /，而链接中有 /，所以需要在文件名存储时将 / 替换为 !，在前端显示时再替换回来
+            raw_title = re.search(r'\[(.+)\]', s).group(1)
+            raw_link = re.search(r'\&(.+)\&', raw_title)
+            real_link = raw_link.group(1).replace("!", "/").replace("~", ":") if raw_link else None
+            return real_link
+        else:
+            return None
+    except:
+        return s
 def get_doc(id,score,step,memory_name):
     doc = get_doc_by_id(id,memory_name)
     final_content=doc.page_content
@@ -54,6 +78,8 @@ def get_doc(id,score,step,memory_name):
                 pass
     if doc.metadata['source'].endswith(".pdf") or doc.metadata['source'].endswith(".txt"):
         title=f"[{doc.metadata['source']}](/txt/{doc.metadata['source']})"
+        title = '['+get_title_from_title(title)+']('+get_link_from_title(title)+')' #自定义超链接形式
+        #title=
     else:
         title=doc.metadata['source']
     return {'title': title,'content':re.sub(r'\n+', "\n", final_content),"score":int(score)}
