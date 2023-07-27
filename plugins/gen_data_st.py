@@ -85,7 +85,7 @@ length_of_read=0
 for i in range(len(all_files)):
     root, file=all_files[i]
     data = ""
-    title = ""
+
     try:
         file_path = os.path.join(root, file)
         _, ext = os.path.splitext(file_path)
@@ -115,6 +115,9 @@ for i in range(len(all_files)):
     data = re.sub(r'\n\n', "\n", data)
     data = re.sub(r"\n\s*\n", "\n", data)
     length_of_read+=len(data)
+    #给每个片段都加上title再放入知识库
+    title = file.splite('.')[0]     #文档标题
+    data = title + data
     docs.append(Document(page_content=data, metadata={"source": file}))
     if length_of_read > 1e5:
         success_print("处理进度",int(100*i/len(all_files)),f"%\t({i}/{len(all_files)})")
